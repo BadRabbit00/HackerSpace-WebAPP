@@ -8,6 +8,7 @@ from aio_pika import Connection, connect_robust
 
 from app.config import Settings, get_settings
 from app.database import get_db  # Re-export for convenience
+from app.core.s3 import s3_client, S3Client
 
 # Global connection instances
 _redis_client: Optional[redis.Redis] = None
@@ -15,12 +16,17 @@ _rabbitmq_connection: Optional[Connection] = None
 
 
 # Re-export get_db from database module
-__all__ = ["get_db", "get_config", "get_redis", "get_rabbitmq", "init_connections", "close_connections"]
+__all__ = ["get_db", "get_config", "get_redis", "get_rabbitmq", "init_connections", "close_connections", "get_s3_client"]
 
 
 def get_config() -> Settings:
     """Get application settings."""
     return get_settings()
+
+def get_s3_client() -> S3Client:
+    """Get S3 client instance."""
+    return s3_client
+
 
 
 async def get_redis() -> AsyncGenerator[redis.Redis, None]:

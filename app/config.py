@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     # Security
     secret_key: str = "your-super-secret-key-change-in-production"
     access_token_expire_minutes: int = 30
+    refresh_token_expire_days: int = 7
     algorithm: str = "HS256"
 
     # PostgreSQL Database
@@ -69,6 +70,13 @@ class Settings(BaseSettings):
     rabbitmq_port: int = 5672
     rabbitmq_user: str = "guest"
     rabbitmq_password: str = "guest"
+
+    # S3 Storage (MinIO / AWS / GCP)
+    s3_access_key: str = "minioadmin"
+    s3_secret_key: str = "minioadmin"
+    s3_endpoint: str = "http://localhost:9000"
+    s3_bucket_name: str = "hackerspace-files"
+    s3_region: str = "us-east-1" # Для MinIO обычно us-east-1
 
     @property
     def rabbitmq_url(self) -> str:
