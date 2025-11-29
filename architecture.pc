@@ -1,0 +1,170 @@
+
+Table User {
+  id uuid [primary key]
+  username varchar [not null]
+  email varchar [not null]
+  role varchar [not null, default: "user"]
+  hashed_password varchar [not null]
+  refresh_token varchar
+  is_active bool [not null, default: False]
+}
+
+Table UserProfile {
+  user_id uuid [primary key]
+  subscription_type varchar
+  bio varchar
+  avatar varchar
+  github_link varchar
+
+}
+
+Table UserPersonalData{
+  user_id uuid [primary key]
+  iin varchar [not null]
+  address varchar [not null]
+  phone_number varchar [not null]
+  date_of_birth date
+  document_front varchar [not null]
+  document_back varchar
+  student_id varchar
+
+  is_student bool [default: False]
+  is_verified bool [default: False]
+}
+
+Table VerificationRequest{
+  id integer [primary key]
+  user_id uuid
+
+  verified_status enum [default: "pending"]
+  student_status enum  [default: "pending"]
+
+  is_student bool
+  is_verified bool
+}
+
+Table Subscription{
+  id integer [primary key]
+  name varchar [not null]
+  description varchar
+  price decimal  [not null]
+  discount decimal 
+  student_discount decimal 
+}
+
+Table Item{
+  id uuid [primary key]
+  owner_id uuid
+  serial_number varchar [not null]
+  description varchar 
+  received_at datetime  
+  for_rent bool [default: true]
+}
+
+Table Loan{
+  id integer [primary key]
+  tenant_id uuid
+  item_id uuid [not null]
+  status enum [default: "pending"]
+  reason varchar [not null]
+  document_receipt varchar
+  created_at datetime [not null]
+  received_at datetime  
+  return_date datetime [not null]
+  returned_at datetime
+}
+
+Table LoanQueue{
+  id integer [primary key]
+  item_id uuid
+  tenant_id uuid [not null]
+  created_at datetime  [not null]
+  loan_date datetime  [not null]
+  return_date datetime  [not null]
+}
+
+Table Content{
+  id uuid [primary key]
+  title varchar [not null]
+  description varchar [not null]
+  author_id uuid [not null]
+  posted_at datetime  [not null]
+}
+
+Table News{
+  id uuid [primary key]
+  full_url varchar
+}
+
+Table Event{
+  id uuid [primary key]
+  speaker_id uuid
+  full_url varchar
+  location varchar
+  start_at datetime 
+  stop_at datetime 
+}
+
+Table Photo{
+  id uuid [primary key]
+  file_url varchar
+}
+
+Table Comment{
+  id integer [primary key]
+  author_id uuid
+  post_id uuid
+  created_at datetime 
+  description varchar
+}
+
+Table Like{
+  id integer [primary key]
+  author_id uuid
+  post_id uuid
+}
+
+Table EventParticipant{
+  event_id uuid [primary key]
+  user_id uuid [primary key]
+}
+
+Ref: User.id - UserProfile.user_id
+Ref: User.id - VerificationRequest.user_id
+
+
+Ref: "User"."id" < "Item"."owner_id"
+
+Ref: "User"."id" < "Loan"."tenant_id"
+
+Ref: "Item"."id" < "Loan"."item_id"
+
+Ref: "Item"."id" < "LoanQueue"."item_id"
+
+Ref: "User"."id" < "LoanQueue"."tenant_id"
+
+Ref: "User"."id" < "Event"."speaker_id"
+
+Ref: "User"."id" < "Like"."author_id"
+
+Ref: "User"."id" < "Comment"."author_id"
+
+Ref: "UserProfile"."subscription_type" < "Subscription"."name"
+
+Ref: "User"."id" - "UserPersonalData"."user_id"
+
+Ref: "Content"."id" - "Event"."id"
+
+Ref: "Content"."id" - "News"."id"
+
+Ref: "Content"."id" - "Photo"."id"
+
+Ref: "Content"."id" < "Like"."post_id"
+
+Ref: "User"."id" < "Content"."author_id"
+
+Ref: "Content"."id" < "Comment"."post_id"
+
+Ref: "Event"."id" < "EventParticipant"."event_id"
+
+Ref: "User"."id" < "EventParticipant"."user_id"
